@@ -2,7 +2,7 @@ import './App.css'
 import {User, MessageCircle, X, Heart} from 'lucide-react';
 import React, {useState} from 'react';
 
-const MatchesList = () => {
+const MatchesList = ({onSelectMatch}) => {
   return(
     <div className='rounded-lg shadow-lg p-4'>
       <h2 className='text-2xl font-bold mb-4'>Matches</h2>
@@ -12,7 +12,9 @@ const MatchesList = () => {
           {id: 2, firstName: 'SSS', lastName: 'ERW', imageUrl: 'http://192.168.0.13:8080/060a0b27-ec59-4a99-b4cb-234ffe0d1e1d.jpg'}
         ].map(match => (
           <li key={match.id} className='mb-2'>
-            <button className='w-full rounded flex item-center hover:bg-gray-100'>
+            <button 
+              className='w-full rounded flex item-center hover:bg-gray-100'
+              onClick={onSelectMatch}>
              <img src={match.imageUrl} className='w-16 h-16 rounded-full mr-3 object-cover'/>
              <span>
               <h3 className='font-bold'>{match.firstName} {match.lastName}</h3>
@@ -114,7 +116,7 @@ function App() {
       case 'profile':
         return <ProfileSelector/>;
       case 'matches':
-        return <MatchesList/>;
+        return <MatchesList onSelectMatch = {() => setCurrentScreen('chat')}/>;
       case 'chat' :
         return <ChatScreen/>;
     }

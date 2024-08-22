@@ -1,6 +1,31 @@
 import './App.css'
 import {User, MessageCircle, X, Heart} from 'lucide-react';
 
+const MatchesList = () => {
+  return(
+    <div className='rounded-lg shadow-lg p-4'>
+      <h2 className='text-2xl font-bold mb-4'>Matches</h2>
+      <ul>
+        {[
+          {id: 1, firstName: 'Foo', lastName: 'Bar', imageUrl: 'http://192.168.0.13:8080/060a0b27-ec59-4a99-b4cb-234ffe0d1e1d.jpg'},
+          {id: 2, firstName: 'SSS', lastName: 'ERW', imageUrl: 'http://192.168.0.13:8080/060a0b27-ec59-4a99-b4cb-234ffe0d1e1d.jpg'}
+        ].map(match => (
+          <li key={match.id} className='mb-2'>
+            <button className='w-full rounded flex item-center hover:bg-gray-100'>
+             <img src={match.imageUrl} className='w-16 h-16 rounded-full mr-3 object-cover'/>
+             <span>
+              <h3 className='font-bold'>{match.firstName} {match.lastName}</h3>
+             </span>
+            </button>
+          </li>
+        ))
+        
+        }
+      </ul>
+    </div>
+  );
+}
+
 const ProfileSelector = () => {
   return(
     <div className='rounded-lg overflow-hidden bg-white shadow-lg my-3'>
@@ -35,6 +60,7 @@ function App() {
       <MessageCircle />
     </nav>
     <ProfileSelector />
+    {/* <MatchesList/> */}
   </div>
   
   </>)

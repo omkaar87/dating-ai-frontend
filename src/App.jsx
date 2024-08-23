@@ -23,22 +23,27 @@ const saveSwipe = async(profileId) =>{
   }
 }
 
-const MatchesList = ({onSelectMatch}) => {
+const fetchMatches = async() =>{
+  const response  = await fetch('http://localhost:8080/matches');
+  if(!response.ok){
+    throw new Error('Failed to fetch swipe');
+  }
+  return response.json();
+}
+
+const MatchesList = ({matches, onSelectMatch}) => {
   return(
     <div className='rounded-lg shadow-lg p-4'>
       <h2 className='text-2xl font-bold mb-4'>Matches</h2>
       <ul>
-        {[
-          {id: 1, firstName: 'Foo', lastName: 'Bar', imageUrl: 'http://192.168.0.13:8080/060a0b27-ec59-4a99-b4cb-234ffe0d1e1d.jpg'},
-          {id: 2, firstName: 'SSS', lastName: 'ERW', imageUrl: 'http://192.168.0.13:8080/060a0b27-ec59-4a99-b4cb-234ffe0d1e1d.jpg'}
-        ].map(match => (
-          <li key={match.id} className='mb-2'>
+        {matches.map(match => (
+          <li key={match.profile.id} className='mb-2'>
             <button 
               className='w-full rounded flex item-center hover:bg-gray-100'
               onClick={onSelectMatch}>
-             <img src={match.imageUrl} className='w-16 h-16 rounded-full mr-3 object-cover'/>
+             <img src={'http://127.0.0.1:8081/'+match.profile.imageUrl} className='w-16 h-16 rounded-full mr-3 object-cover'/>
              <span>
-              <h3 className='font-bold'>{match.firstName} {match.lastName}</h3>
+              <h3 className='font-bold'>{match.profile.firstName} {match.profile.lastName}</h3>
              </span>
             </button>
           </li>
@@ -141,19 +146,31 @@ function App() {
     }
   }
 
+  const loadMatches = async () => {
+    try{
+      const matches = await fetchMatches();
+      setMatches(matches);
+    }catch(error){
+      console.error(error);
+    }
+  }
+
   useEffect(() => {
     loadRandomProfile();
+    loadMatches();
   },{});
 
 
   const [currentScreen, setCurrentScreen] = useState('profile');
   const [currentProfile, setCurrentProfile] = useState(null);
+  const [matches, setMatches] = useState([]);
 
-  const onSwipe = (profileId, direction) => {
-    if(direction === 'right'){
-      saveSwipe(profileId);
-    }
+  const onSwipe = async (profileId, direction) => {
     loadRandomProfile();
+    if(direction === 'right'){
+      await saveSwipe(profileId);
+      await loadMatches();
+    }
   }
 
 
@@ -163,7 +180,7 @@ function App() {
       case 'profile':
         return <ProfileSelector profile={currentProfile} onSwipe={onSwipe}/>;
       case 'matches':
-        return <MatchesList onSelectMatch = {() => setCurrentScreen('chat')}/>;
+        return <MatchesList matches={matches} onSelectMatch = {() => setCurrentScreen('chat')}/>;
       case 'chat' :
         return <ChatScreen/>;
     }

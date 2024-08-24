@@ -46,7 +46,7 @@ const sendMessage = async(conversationId, message) =>{
     headers: {
       'content-type' : 'application/json'
     },
-    body: JSON.stringify({messageText: message, authorId:1})
+    body: JSON.stringify({messageText: message, authorId:'user'})
   });
   if(!response.ok){
     throw new Error('Failed to send message');
@@ -123,10 +123,16 @@ const ChatScreen = ({currentMatch, conversation, refreshState}) => {
   return currentMatch ? (
     <div className='rounded-lg shadow-lg p-4'>
       <h2 className='text-2xl font-bold mb-4'>Chat with {currentMatch.firstName} {currentMatch.lastName}</h2>
-      <div className='h-[50vh] border rounded overflow-y-auto mb-4 p-2'>
+      <div className='h-[50vh] border rounded overflow-y-auto mb-4 p-2 bg-gray-50'>
       {conversation.messages.map((message, index) => (
-          <div key={index}>
-            <div className='mb-4 p-2 rounded bg-gray-100'>{message.messageText}</div>
+          <div key={index} className={`flex ${message.authorId === 'user' ? 'justify-end' : 'justify-start'} mb-4`}>
+            <div className={`flex items-end ${message.authorId === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+              {message.authorId === 'user' ? (<User size={15}/>) : 
+              (<img src={`http://127.0.0.1:8081/${currentMatch.imageUrl}`} className='w-11 h-11 rounded-full' />)}
+            </div>
+            <div className={`max-w-xs px-4 py-2 rounded-2xl ${message.authorId === 'user' ? 'bg-blue-500 text-white ml-2' : 'bg-gray-200 text-gray-800 mr-2'}`}>
+              {message.messageText}
+            </div>
           </div>
         )
 
